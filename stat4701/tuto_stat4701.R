@@ -2,16 +2,13 @@
 #http://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
 
 
-
-
 #remove.packages("stringi")
 #install.packages("curl")
 
 
 #rm(list = ls())
 
-#Sys.setenv(http_proxy="http://dia2.santanderuk.gs.corp:80")
-#Sys.getenv("http_proxy")
+
 
 #**************************************IMDB
 
