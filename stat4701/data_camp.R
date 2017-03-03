@@ -1,8 +1,8 @@
-#https://www.datacamp.com/community/blog/coursera-course-on-computational-finance-with-r#gs.SDsZe7M
+#http://www.quantmod.com/examples/charting/
 
+library(TTR)   **
+rm(list = ls())
 
-# Assign the URL to the CSV file
-data_url <- "http://assets.datacamp.com/course/compfin/sbuxPrices.csv"
+ getSymbols("GS") #Goldman OHLC from yahoo
 
-# Load the data frame using read.csv
-sbux_df <- read.csv(data_url,stringsAsFactors = FALSE, header = TRUE)
+ chartSeries(GS) 

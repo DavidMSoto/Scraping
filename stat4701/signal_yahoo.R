@@ -2,7 +2,7 @@
 rm(list = ls())
 
 
-library(TTR)
+library(TTR) #  **
 library(rvest)
 library(pbapply)
 library(TTR)
@@ -24,13 +24,15 @@ stocksTS<-pblapply(tickers,getYahooData,endDate, startDate)
 
 
 plot(stocksTS[[1]]$Close)
+bbands <- BBands( stocksTS[[1]][,c("High","Low","Close")] )
 
 
-dygraph(stocksTS[[1]]$Close, main = "TWTR Stock Price") %>%
-  dyRangeSelector(dateWindow = c("2013-12-18", "2016-12-30"))
+dygraph(stocksTS[[1]]$Close, main = "TWTR Stock Price") %>%    dyRangeSelector(dateWindow = c("2013-12-18", "2016-12-30"))
 
 head(SMA(stocksTS[[1]]$Close, 200))
 head(SMA(stocksTS[[1]]$Close, 50))
+
+bbands <- BBands( stocksTS[[1]][,c("High","Low","Close")] )
 
 mov.avgs<-function(stock.df){
   stock.close<-stock.df[,4]
