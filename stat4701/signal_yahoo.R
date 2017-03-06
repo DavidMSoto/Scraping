@@ -1,4 +1,8 @@
 
+# Analizar ibex 35, nasdaq .. ftse 100
+
+
+
 rm(list = ls())
 
 

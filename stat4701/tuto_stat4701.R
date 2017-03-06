@@ -1,4 +1,7 @@
 
+# Scraping the web, 
+# - experiments about ? sentimientos 
+
 #http://stat4701.github.io/edav/2015/04/02/rvest_tutorial/
 
 
