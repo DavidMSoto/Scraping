@@ -9,6 +9,8 @@ library(PerformanceAnalytics, warn.conflicts = FALSE, quietly = TRUE)
 library(knitr, warn.conflicts = FALSE, quietly = TRUE)
 
 # Set up the data source and the tickers for all the ETFs...
+
+TES = c("BULP")
 data.source = c("yahoo")
 tickers.etf = c("VGSIX", "VUSTX", "VGTSX", "VFISX", "VTSMX", "VFITX", "VEIEX", "VIPSX")
 tickers.human = c("Real Est", "USTSY Long", "For Eq", "USTSY Short", "All Eq", "USTSY Int.", "EM Eq", "Infl Sec.")
@@ -18,7 +20,7 @@ tsy.2y <- c("DGS2")
 
 # Get the data from yahoo and FRED ...
 suppressWarnings(getData(tickers.etf, data.source))
-
+suppressWarnings(getData(TES, data.source))
 
 suppressWarnings(getData(tsy.2y, datasrc = "FRED"))
 
