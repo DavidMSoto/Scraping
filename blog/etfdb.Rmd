@@ -67,12 +67,9 @@ now that we have the html is easier scrap it.
 
 tengo una 
 
-table
-thead
-tbody
-tfoot
+table thead tbody tfoot
 
-supongo que algo podré hacer con esto !
+supongo que algo podrï¿½ hacer con esto !
 
 
 ```{r pressure, echo=FALSE}
@@ -95,7 +92,8 @@ xlocal %>% html_node("bootstrap-table") %>%    html_table(header = TRUE)
 
 ```
 
-althought as we already have the information we probably should focus in how to parse the XML
+althought as we already have the information we probably should focus in how to
+parse the XML
 
 ```{r pressure, echo=FALSE}
 library(XML)
