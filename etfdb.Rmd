@@ -65,6 +65,15 @@ page.open('http://www.techstars.com/companies/stats/', function (status) {
 
 now that we have the html is easier scrap it. 
 
+tengo una 
+
+table
+thead
+tbody
+tfoot
+
+supongo que algo podré hacer con esto !
+
 
 ```{r pressure, echo=FALSE}
 xlocal <- read_html("C:/HIP/SOFT/instalados/phantomjs-2.1.1-windows/bin/etf.html")
