@@ -119,6 +119,45 @@ tbl$BirthDate<-as.Date(tbl$BirthDate[1],format="%B %d, %Y")
 ```
 
 
+## RCurl
+
+```{r  pressure, echo=FALSE}
+
+setwd("C:/temp/")
+
+Sys.setenv(http_proxy="http://dia2.santanderuk.gs.corp:80")
+Sys.getenv("http_proxy")
+
+
+library(RCurl)
+url =  "http://etfdb.com/type/sector/all/#etfs__overview&sort_name=assets_under_management&sort_order=desc&page=1"
+
+# parse url
+
+file <- getURL(url)
+
+ 
+ sink("D:/repos/BlogsEntries/Scraping/htmldata/exaa4.html")
+ file
+ 
+  
+etf<-readHTMLTable("D:/repos/BlogsEntries/Scraping/htmldata/etf_1.html")
+
+etf<-readHTMLTable("D:/repos/BlogsEntries/Scraping/htmldata/exaa4.html")
+
+sink(NULL)
+
+doc<-htmlParse('ex.txt')
+
+
+
+
+
+```
+
+
+
+
 ## yahoo data -----
 ```{r yahoo, echo=FALSE}
 TES = c("CHOC")
