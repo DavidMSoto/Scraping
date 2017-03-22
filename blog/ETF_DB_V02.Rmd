@@ -4,12 +4,11 @@ output: html_document
 ---
 rm(list = ls())
 
-## dinamic websites
+## phantom
 
 lets gather the website as html throuth jsp 
 #scrape_techstars.js
 
-#https://www.datacamp.com/community/tutorials/scraping-javascript-generated-data-with-r#gs.er=B0wg
 
 ```{js  pressure, echo=FALSE}
 
@@ -40,16 +39,10 @@ setwd("D:/repos/BlogsEntries/Scraping/")
 
 
 url =  "http://etfdb.com/type/sector/all/#etfs__overview&sort_name=assets_under_management&sort_order=desc&page="
+for (i in 1:20) {system(sprintf("./phantomjs-2.1.1-macosx/bin/phantomjs ./Scraping/blog/scrape_etf.js '%s%d' ./Scraping/htmldata/etf_%d" , url, i, i))}
 
-
-for (i in 1:3) {system(sprintf("./phantomjs-2.1.1-macosx/bin/phantomjs ./Scraping/blog/scrape_etf.js %s%d %d" , url, i, i))}
-
-system("D:/repos/BlogsEntries/Scraping/htmldata/phantomjs/phantomjs.exe")
-for (i in 1:3) {system(sprintf("./htmldata/phantomjs/phantomjs.exe ./blog/scrape_etf.js %s%d %d" , url, i, i))}
 
 ```
-
-
 
 
 
@@ -61,40 +54,33 @@ library(XML)
  
 ###### Reading data
 
-macurl <-  "/Users/davidmonteagudo/git/Scraping/techstars.xml"
-winUrl  <-  "D:/repos/BlogsEntries/Scraping/htmldata/etf_1.html"
+setwd("/Users/davidmonteagudo/git/Scraping/htmldata/")
 
-localurl <- winUrl
+listhtml <- list.files("/Users/davidmonteagudo/git/Scraping/htmldata/")
 
+len<-length(listhtml)
 
+tbl<-readHTMLTable(listhtml[1])[[2]]
+
+for (i in 2:length(listhtml)) 	{tbl<-rbind(tbl,readHTMLTable(listhtml[i])[[2]])}
+
+dim(tbl)
 
 # select table nodes of interest
 
-
-
-etf<-readHTMLTable(localurl)[[2]]
-
-
-header = c("Symbol", "Inception")
-
-etf$Symbol[1]
-
-
-colnames(etf)<-c("Symbol","ETFdb.com Category","Inception")
-class(etf)
-
-for (i in 2:len) 	{tbl<-rbind(etf,readHTMLTable(url[i])[[2]])}
  
-###### Formatting data
-colnames(tbl)<-c("Symbol","ETFdb.com Category","Inception")
-tbl$BirthDate<-as.Date(tbl$BirthDate[1],format="%B %d, %Y")
 
 ```
 
-```{r htmltable, echo=FALSE}
+```{r htmltab, echo=FALSE}
+library(htmltab)
 
-url <-winUrl
-htmltab1 <- htmltab(doc = url,which = 2)
-unique(htmltab1$`ETFdb.com Category`)
 
+htmltab_1 <- htmltab(doc = listhtml[1],which = 2)
+class(htmltab_1)
+
+for (i in 2:length(listhtml)) 	{htmltab_1<-rbind(htmltab_1,htmltab(doc = listhtml[i],which = 2))}
+
+unique(htmltab_1$`ETFdb.com Category`)
+unique(htmltab_1$Symbol)
 ```

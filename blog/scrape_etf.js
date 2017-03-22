@@ -11,6 +11,6 @@ var path = args[2];
 
 page.open(address, function (status) {
   var content = page.content;
-  fs.write("etfs_" + path + ".html",content,'w')
+  fs.write( path + ".html",content,'w')
   phantom.exit();
 });
