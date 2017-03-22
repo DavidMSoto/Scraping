@@ -1,0 +1,41 @@
+---
+title: "ETFproject"
+output: html_document
+---
+
+
+## dinamic websites
+
+lets gather the website as html throuth jsp 
+#scrape_techstars.js
+
+#https://www.datacamp.com/community/tutorials/scraping-javascript-generated-data-with-r#gs.er=B0wg
+
+```{js  pressure, echo=FALSE}
+
+var webPage = require('webpage');
+var page = webPage.create();
+
+var fs = require('fs');
+var path = 'techstars.html'
+
+page.open(_args[0], function (status) {
+  var content = page.content;
+  fs.write(path,content,'w')
+  phantom.exit();
+});
+
+```
+
+## dinamic websites
+
+```{r  pressure, echo=FALSE}
+
+setwd("/Users/davidmonteagudo/git/")
+
+url = 		 "http://etfdb.com/type/sector/all/#etfs__overview&sort_name=assets_under_management&sort_order=desc&page="
+
+for (i in 1:3) {system(sprintf("./phantomjs-2.1.1-macosx/bin/phantomjs ./Scraping/blog/scrape_etf.js %s%d %d" , url, i, i))}
+
+
+```
