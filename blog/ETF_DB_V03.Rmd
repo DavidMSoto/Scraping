@@ -1,0 +1,75 @@
+---
+title: "ETFproject"
+output: html_document
+---
+rm(list = ls())
+
+# 
+
+https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac
+
+
+"docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0"
+
+http://localhost/
+
+"ps docker"
+
+despues de instalar y correr docker, lo unico que tenemos que hacer es paginar
+las 20 paginas
+system("docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0")
+
+
+
+```{r  scrapping, echo=FALSE}
+
+library('RSelenium')
+library('XML')
+
+remDr <- remoteDriver(port = 4445L)
+remDr$open()
+
+df <- data.frame(Date=as.Date(character()),
+		File=character(), 
+		User=character(), 
+		stringsAsFactors=FALSE) 
+
+
+for (i in 1:20) {  
+	
+	url = paste0("http://etfdb.com/type/sector/all/#etfs__overview&sort_name=assets_under_management&sort_order=desc&page=",i)
+	remDr$open()
+	remDr$navigate(url)
+	
+ html <- unlist(remDr$getPageSource())
+ 
+ table <- readHTMLTable(html)[[2]]
+ 
+ df <-rbind( df ,table )
+ 
+}
+
+
+ saveRDS(df, file.path(getwd(), "df.rds"))
+ 
+ 
+
+```
+at this point better if we stop Stop / remove all Docker containers to free up some resources in our system. 
+
+docker stop $(docker ps -a -q) 
+docker rm $(docker ps -a -q)
+
+```{r  data_munging, echo=FALSE}
+rm(list = ls())
+ train <- readRDS("df.rds")
+ 
+
+ ```
+ 
+ ```{r  ExploratoryAnalysis, echo=FALSE}
+rm(list = ls())
+ train <- readRDS("df.rds")
+ 
+
+ ```
