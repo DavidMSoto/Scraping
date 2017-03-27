@@ -2,9 +2,7 @@
 title: "ETFproject"
 output: html_document
 ---
-rm(list = ls())
 
-# 
 
 https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac
 
@@ -22,7 +20,7 @@ system("docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0")
 
 
 ```{r  scrapping, echo=FALSE}
-
+rm(list = ls())
 library('RSelenium')
 library('XML')
 
@@ -60,16 +58,40 @@ at this point better if we stop Stop / remove all Docker containers to free up s
 docker stop $(docker ps -a -q) 
 docker rm $(docker ps -a -q)
 
+
+
 ```{r  data_munging, echo=FALSE}
 rm(list = ls())
- train <- readRDS("df.rds")
- 
+getwd()
 
- ```
+library(dplyr)
+
+ train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
+
+train <- train %>%    select(1,2,3,4,5,6,7,8,9)
+
+
+missing.types <- c("NA", "","N/A")
+
+dat[, c(1,2)] <- sapply(dat[, c(3,6:15,37)], as.character)
+
+
+
+
+train.raw <- readData(Titanic.path, train.data.file, 
+                      train.column.types, missing.types)
+
+
+```
+
+#la idea - book
+
  
- ```{r  ExploratoryAnalysis, echo=FALSE}
+```{r  ExploratoryAnalysis, echo=FALSE}
 rm(list = ls())
  train <- readRDS("df.rds")
  
 
- ```
+```
+ 
+ 
