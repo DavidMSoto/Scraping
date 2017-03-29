@@ -65,21 +65,45 @@ rm(list = ls())
 getwd()
 
 library(dplyr)
+options(digits=2)
 
- train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
-
-train <- train %>%    select(1,2,3,4,5,6,7,8,9)
-
-
-missing.types <- c("NA", "","N/A")
-
-dat[, c(1,2)] <- sapply(dat[, c(3,6:15,37)], as.character)
+train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
+class(train)
 
 
+names(train) <- gsub("[\n]| ",'',names(train))   ## nicer names 
+test <- train %>%    select(1,2,13)
 
 
-train.raw <- readData(Titanic.path, train.data.file, 
-                      train.column.types, missing.types)
+summary(test)
+str(test)
+
+
+test[, c(1,2)] <- sapply(test[, c(1,2)], as.character)
+test[, c(3)]<- as.numeric(sub("%", "", test[, c(3)]))
+
+test[,order(3)]
+
+percent_vec = paste(1:100, "%", sep = "")
+as.numeric(sub("%", "", percent_vec))
+
+
+library(plyr)
+arrange(test,desc(3),1)
+
+train[, c(3)] <- sapply(gsub("[$]", "", train[,3]), as.numeric)
+     
+
+
+median(train[,3])
+
+train[, c(3)] <-as.numeric(sub('\\$','',as.character(train[, c(3)]))) 
+
+
+class(train)
+
+
+describe(train)
 
 
 ```
