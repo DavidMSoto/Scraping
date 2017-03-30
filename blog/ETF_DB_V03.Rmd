@@ -3,9 +3,9 @@ title: "ETFproject"
 output: html_document
 ---
 
+rm(list = ls())
 
 https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac
-
 
 "docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0"
 
@@ -14,18 +14,19 @@ http://localhost/
 "ps docker"
 
 despues de instalar y correr docker, lo unico que tenemos que hacer es paginar
-las 20 paginas
-system("docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0")
+las 20 paginas system("docker run -d -p 4445:4444
+selenium/standalone-firefox:2.53.0")
 
-
+#https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html
 
 ```{r  scrapping, echo=FALSE}
-rm(list = ls())
+
 library('RSelenium')
 library('XML')
 
-remDr <- remoteDriver(port = 4445L)
-remDr$open()
+
+#remDr <- remoteDr(browserName = "firefox", port = 4445L)
+
 
 df <- data.frame(Date=as.Date(character()),
 		File=character(), 
@@ -33,19 +34,31 @@ df <- data.frame(Date=as.Date(character()),
 		stringsAsFactors=FALSE) 
 
 
-for (i in 1:20) {  
-	
-	url = paste0("http://etfdb.com/type/sector/all/#etfs__overview&sort_name=assets_under_management&sort_order=desc&page=",i)
+
+
+
+baseURL = 'http://etfdb.com/type/sector/all/#etfs&sort_name=assets_under_management&sort_order=desc&page='
+
+for (i in 1:3) {
+	remDr <- remoteDriver(browserName = "firefox",port = 4445L)
 	remDr$open()
-	remDr$navigate(url)
 	
+	url = paste0(baseURL,i)
+	remDr$navigate(url)
+	remDr$refresh()
+
  html <- unlist(remDr$getPageSource())
- 
  table <- readHTMLTable(html)[[2]]
  
- df <-rbind( df ,table )
+ write.table(table, file = paste0(i , ".csv") )
  
+ df <-rbind( df ,table )
+
+ print(unlist(remDr$getCurrentUrl()))
+
+ remDr$close()
 }
+
 
 
  saveRDS(df, file.path(getwd(), "df.rds"))
@@ -53,6 +66,7 @@ for (i in 1:20) {
  
 
 ```
+
 at this point better if we stop Stop / remove all Docker containers to free up some resources in our system. 
 
 docker stop $(docker ps -a -q) 
@@ -62,12 +76,15 @@ docker rm $(docker ps -a -q)
 
 ```{r  data_munging, echo=FALSE}
 rm(list = ls())
-getwd()
 
+library(data.table)
+library(bit64)
 library(dplyr)
 options(digits=2)
 
-train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
+#train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
+setwd('/Users/davidmonteagudo/git/Scraping/')
+train <- readRDS("df.rds") %>% as.data.frame() # SILENCE
 class(train)
 
 
