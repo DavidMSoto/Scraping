@@ -3,9 +3,9 @@ title: "ETFproject"
 output: html_document
 ---
 
-rm(list = ls())
 
 https://docs.docker.com/docker-for-mac/install/#download-docker-for-mac
+
 
 "docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0"
 
@@ -14,10 +14,10 @@ http://localhost/
 "ps docker"
 
 despues de instalar y correr docker, lo unico que tenemos que hacer es paginar
-las 20 paginas system("docker run -d -p 4445:4444
-selenium/standalone-firefox:2.53.0")
+las 20 paginas
+system("docker run -d -p 4445:4444 selenium/standalone-firefox:2.53.0")
 
-#https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html
+
 
 ```{r  scrapping, echo=FALSE}
 
@@ -32,9 +32,6 @@ df <- data.frame(Date=as.Date(character()),
 		File=character(), 
 		User=character(), 
 		stringsAsFactors=FALSE) 
-
-
-
 
 
 baseURL = 'http://etfdb.com/type/sector/all/#etfs&sort_name=assets_under_management&sort_order=desc&page='
@@ -66,7 +63,6 @@ for (i in 1:3) {
  
 
 ```
-
 at this point better if we stop Stop / remove all Docker containers to free up some resources in our system. 
 
 docker stop $(docker ps -a -q) 
@@ -75,64 +71,94 @@ docker rm $(docker ps -a -q)
 
 
 ```{r  data_munging, echo=FALSE}
-rm(list = ls())
-
+# Load the required libraries
 library(data.table)
 library(bit64)
+
+rm(list = ls())
+getwd()
+
 library(dplyr)
 options(digits=2)
 
-#train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
-setwd('/Users/davidmonteagudo/git/Scraping/')
-train <- readRDS("df.rds") %>% as.data.frame() # SILENCE
-class(train)
+train <- readRDS("D:/repos/Scraping/df.rds") %>% as.data.frame() # SILENCE
+str(train)
 
-
-names(train) <- gsub("[\n]| ",'',names(train))   ## nicer names 
-test <- train %>%    select(1,2,13)
-
-
-summary(test)
-str(test)
-
-
-test[, c(1,2)] <- sapply(test[, c(1,2)], as.character)
-test[, c(3)]<- as.numeric(sub("%", "", test[, c(3)]))
-
-test[,order(3)]
-
-percent_vec = paste(1:100, "%", sep = "")
-as.numeric(sub("%", "", percent_vec))
-
-
-library(plyr)
-arrange(test,desc(3),1)
-
-train[, c(3)] <- sapply(gsub("[$]", "", train[,3]), as.numeric)
-     
-
-
-median(train[,3])
-
-train[, c(3)] <-as.numeric(sub('\\$','',as.character(train[, c(3)]))) 
-
-
-class(train)
-
-
-describe(train)
 
 
 ```
 
-#la idea - book
+
+
+#data cleaning
 
  
 ```{r  ExploratoryAnalysis, echo=FALSE}
-rm(list = ls())
- train <- readRDS("df.rds")
- 
+
+names(train) <- gsub("[\n]| ",'',names(train))   ## nicer names 
+
+heatmap <- train %>%    select(1,2,9,10,11,12,13,14)
+summary(heatmap)
+
+names(heatmap)
+
+heatmap[, c(1,2,8)] <- sapply(heatmap[, c(1,2,8)], as.character)
+
+heatmap[, c(3)]<- as.numeric(sub("%", "", heatmap[, c(3)]))
+heatmap[, c(4)]<- as.numeric(sub("%", "", heatmap[, c(4)]))
+heatmap[, c(5)]<- as.numeric(sub("%", "", heatmap[, c(5)]))
+heatmap[, c(6)]<- as.numeric(sub("%", "", heatmap[, c(6)]))
+heatmap[, c(7)]<- as.numeric(sub("%", "", heatmap[, c(7)]))
+
+#train[, c(3)] <- sapply(gsub("[$]", "", train[,3]), as.numeric)
+
+summary(heatmap) #- 106 NAs ..
+
+require(Amelia)
+
+completeHeat <-heatmap[complete.cases(heatmap),]  #**removing NAs
+
+unique(completeHeat$ETFdb.comCategory)
+
 
 ```
- 
- 
+
+#ExploratoryAnalysis heat map by category
+#http://flowingdata.com/2010/01/21/how-to-make-a-heatmap-a-quick-and-easy-solution/
+#https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
+
+```{r  ExploratoryAnalysis_HEATMAP, echo=FALSE}
+
+
+xxx <- aggregate( cbind(completeHeat$`5year` ,  completeHeat$`3year` , completeHeat$`1year` , completeHeat$`4Week` )
+           ~  ETFdb.comCategory, completeHeat, mean )
+
+data <- xxx[order(xxx$V1),]
+str(data)
+
+colnames(data) <- c("Category", "5 Years", "3 Years", "1 Year", "4 weeks") 
+
+rnames <- data[,1]
+mat_data <- data.matrix(data[,2:ncol(data)])
+rownames(mat_data) <- rnames
+nba_heatmap <- heatmap(mat_data, Rowv=NA, Colv=NA, col = cm.colors(256), scale="column", margins=c(5,10))
+
+data <- xxx[cbind(order(xxx$V1),order(xxx$V2)),]
+data <- xxx[order(xxx$V1),]
+
+```
+
+
+top mejores / top peores 
+
+
+```{r  heatmap, echo=FALSE}
+require("dplyr")
+top <- train %>%    select(1,2,9,10,4,11,12,13,14)
+str(top)
+
+data_head <- head(top[order(top$`5year`),])
+
+data_tail <- tail(top[order(top$`5year`),])
+
+```
